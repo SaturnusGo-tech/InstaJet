@@ -1,0 +1,51 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: instajet.usr
+      POSTGRES_PASSWORD: sdflnciKJLnwj2984347500jdfkl==
+      POSTGRES_DB: instajet
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:6.21
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=service@instajet.io
+      - PGADMIN_DEFAULT_PASSWORD=pg_admin_password
+      - PGADMIN_LISTEN_PORT=5002
+    ports:
+      - 5002:5002
+    volumes:
+      - ./docker-data/pg-admin:/var/lib/postgresql/data
+      - ./config/docker/pg-admin/servers.json:/pgadmin4/servers.json
+      - ./config/docker/pg-admin/pgpass:/pgpass
+      - ./config/docker/pg-admin/config.py:/pgadmin4/config.py
+
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"
+
+  safari-node:
+    image: selenium/node-safari:latest
+    depends_on:
+      - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+    volumes:
+      - /dev/shm:/dev/shm  # This is necessary for running Safari inside the container
+
+  python:
+    build:
+      context: ../Tests
+      dockerfile: Dockerfile
+    volumes:
+      - ./tests:/Test
+
+volumes:
+  pgdata:
