@@ -4,7 +4,7 @@ services:
     image: postgres:13
     environment:
       POSTGRES_USER: instajet.usr
-      POSTGRES_PASSWORD: sdflnciKJLnwj2984347500jdfkl==
+      POSTGRES_PASSWORD:
       POSTGRES_DB: instajet
     ports:
       - 5432:5432
